@@ -8,7 +8,8 @@ getSysInfo() {
     diskUsage=$(df -h / | awk 'NR==2 {print $5}')
     cpuIdle=$(top -bn1 | grep "Cpu(s)" | awk '{print $8}')
     cpuUsage=$(echo "100 - $cpuIdle" | bc)  
-    ramUsage=$(free -h --giga | grep "Mem" | awk '{print $3}')
+    cpuProgress=$(echo "$cpuUsage" | awk '{print int($1)}')
+    usedMemory=$(free -h --giga | grep "Mem" | awk '{print $3}')
     batteryPercent=$(cat /sys/class/power_supply/BAT0/capacity)
     ipAddress=$(ip route get 1.1.1.1 | awk '{print $7}')
 }
@@ -30,13 +31,21 @@ printGeneralInfo() {
 }
 
 printResourceInfo() {
-    echo "Disk usage:     $diskUsage"
+    echo -n "Disk usage:     $diskUsage "
+    
+    diskPercent=$(echo "$diskUsage" | tr -d '%' )
+    createProgressBar "$diskPercent"
+
     echo
-    echo "CPU Usage:      $cpuUsage%" 
+    echo -n "CPU Usage:      $cpuUsage% "
+    
+    createProgressBar "$cpuProgress"
+    
     echo 
-    echo "Memory Usage:   $ramUsage"
+    echo "Memory Usage:   $usedMemory"
     echo 
     echo -n -e  "Battery:        $batteryColour$batteryPercent%\e[0m "
+    
     createProgressBar "$batteryPercent"
 }
 
@@ -76,15 +85,15 @@ main() {
     setBatteryColour
     printHeader
     echo 
-    echo "General"
-    echo "------------------------------------"
-    echo
-    printGeneralInfo
-    echo
     echo "Resources"
     echo "------------------------------------"
     echo
-    printResourceInfo  
+    printResourceInfo
+    echo
+    echo "General"
+    echo "------------------------------------"
+    echo
+    printGeneralInfo 
     echo
     echo "Network"
     echo "------------------------------------"
