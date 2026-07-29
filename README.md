@@ -1,6 +1,6 @@
 # System Monitor 
 
-A lightweight system monitoring dashboard written in Bash that displays important system information directly in the terminal.
+A system monitoring dashboard written in Bash displaying important system info directly within the terminal.
 
 I built this project to improve my Bash scripting and Linux skills whilst also learning how to structure programs into reusable functions. 
 
