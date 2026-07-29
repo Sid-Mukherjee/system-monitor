@@ -22,7 +22,7 @@ The aim of this project was to:
 - Reports memory usage 
 - Displays disk usage 
 - Shows battery percentage with colour coding
-- DIsplays current IP address
+- Displays current IP address
 - Includes reusable progress bars 
 - Organised into functions 
 
@@ -67,7 +67,7 @@ Clone the repository:
 git clone https://github.com/Sid-Mukherjee/system-monitor.git
 ```
 
-Move into the project the repository:
+Move into the project repository:
 
 ```bash 
 cd system-monitor
