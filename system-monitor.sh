@@ -10,7 +10,12 @@ getSysInfo() {
     cpuUsage=$(echo "100 - $cpuIdle" | bc)  
     cpuProgress=$(echo "$cpuUsage" | awk '{print int($1)}')
     usedMemory=$(free -h --giga | grep "Mem" | awk '{print $3}')
-    batteryPercent=$(cat /sys/class/power_supply/BAT0/capacity)
+    if [ -e "/sys/class/power_supply/BAT0/capacity" ]; then
+        batteryAvailable=true
+        batteryPercent=$(cat /sys/class/power_supply/BAT0/capacity)
+    else
+        batteryAvailable=false
+    fi
     ipAddress=$(ip route get 1.1.1.1 | awk '{print $7}')
 }
 
@@ -44,9 +49,13 @@ printResourceInfo() {
     echo 
     echo "Memory Usage:   $usedMemory"
     echo 
-    echo -n -e  "Battery:        $batteryColour$batteryPercent%\e[0m "
     
-    createProgressBar "$batteryPercent"
+    if [ "$batteryAvailable" = true ]; then 
+        echo -n -e  "Battery:        $batteryColour$batteryPercent%\e[0m "
+        createProgressBar "$batteryPercent"
+    else
+        echo "Battery:        Not available"
+    fi
 }
 
 printNetworkInfo() {
@@ -54,6 +63,10 @@ printNetworkInfo() {
 }
 
 setBatteryColour() {
+    if [ "$batteryAvailable" = false ]; then 
+        return
+    fi
+    
     if [ "$batteryPercent" -ge 50 ]; then 
         batteryColour="\e[32m"
         
