@@ -16,7 +16,7 @@ getSysInfo() {
 
 printHeader() {
     echo "============================"
-    echo "System Health Dashboard"
+    echo "  System Health Dashboard  "
     echo "============================"
 }
 
@@ -80,9 +80,22 @@ createProgressBar() {
     echo
 }
 
+checkDependencies() {
+    local dependencies=("awk" "bc" "grep" "top" "df" "free" "ip")
+    for dependency in "${dependencies[@]}"
+    do 
+        if ! command -v "$dependency" >/dev/null; then 
+            echo "$dependency not found and is required"
+            exit 1
+        fi
+    done
+}
+
 main() {
+    checkDependencies
     getSysInfo
     setBatteryColour
+    echo
     printHeader
     echo 
     echo "Resources"
